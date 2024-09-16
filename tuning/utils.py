@@ -25,11 +25,11 @@ def compute_class_weights(dataset):
 
 def create_criterion(class_weights):
     """Returns a criterion with class weights."""
-    class_weights = class_weights.to(device)  # Ensure class weights are on the same device as the model
+    class_weights = class_weights.to(device)
     return nn.CrossEntropyLoss(weight=class_weights)
 
 
-def train_model(model, train_dataloader, val_dataloader, num_epochs=50, lr=0.001, patience=5):
+def train_model(model, train_dataloader, val_dataloader, num_epochs=50, lr=0.001, patience=5, weight_decay=0.0):
     """
     Train a model with early stopping based on validation loss.
 
@@ -50,7 +50,7 @@ def train_model(model, train_dataloader, val_dataloader, num_epochs=50, lr=0.001
     class_weights = compute_class_weights(train_dataloader.dataset)
     criterion = create_criterion(class_weights)
     
-    optimizer = optim.Adam(model.parameters(), lr=lr)
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     
     best_model_wts = copy.deepcopy(model.state_dict())
     best_val_loss = float('inf')
