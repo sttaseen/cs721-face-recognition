@@ -73,26 +73,25 @@ def process_folder(input_folder, output_folder, background_folder=None):
     image_files = glob(f"{input_folder}/*.*")  # Grab all files in the input folder
     image_files = [file for file in image_files if file.lower().endswith(('.png', '.jpg', '.jpeg'))]
     
-    # Get all background images
     background_images = glob(f"{background_folder}/*.jpg") if background_folder else None
 
     print(f"Background images: {background_images}")
     print(f"Image files: {image_files}")
 
-    # For each input image, mix it with each background image
     for image_file in image_files:
-        for background_image in background_images:
-            print(f"Processing {image_file} with background {background_image}...")
-            
-            # Replace the background
-            new_image = replace_background(image_file, background_image)
-            
-            # Save the result
-            input_filename = os.path.splitext(os.path.basename(image_file))[0]
-            background_filename = os.path.splitext(os.path.basename(background_image))[0]
-            output_path = os.path.join(output_folder, f"{input_filename}_with_{background_filename}.jpg")
-            
-            new_image.save(output_path)
+        print(f"Processing {image_file}...")
+        # Choose a random background image if a folder is provided
+        if background_images:
+            background_image = random.choice(background_images)
+        else:
+            background_image = None
+        
+        # Replace the background
+        new_image = replace_background(image_file, background_image)
+        
+        # Save the result
+        output_path = os.path.join(output_folder, os.path.basename(image_file))
+        new_image.save(output_path)
 
 # Example usage:
 input_folder = "./clusters"
